@@ -6,8 +6,8 @@
  const zlib = require('zlib');
  const Util = require('./src/util');
 
-module.exports = app => {
-  let responseFormat = function(req, res, next) {
+module.exports = (app = {}, config = {}) => {
+  app.responseFormat = function(req, res, next) {
     res.print = function(data){
       let body = {};
       if(req.method == 'GET'){
@@ -31,6 +31,6 @@ module.exports = app => {
     };
     next();
   };
-  app.application.use(responseFormat);
-  return responseFormat;
+  app.application.use(app.responseFormat);
+  return app;
 }
