@@ -4,26 +4,20 @@
  * by jlego on 2018-11-17
  */
  const zlib = require('zlib');
- const { config } = WOOD;
 
 module.exports = (app = {}, config = {}) => {
   let respData = function(data, reqData){
     let status = 0,
       msg = '';
-    if (!data && data !== false) data = config.errorCode.error_nodata;
+    if (!data && data !== false) data = app.config.errorCode.error_nodata;
     if (data.path && data.message && data.kind) { //返回错误
-      status = config.errorCode.error_wrongdata.code;
-      msg = config.errorCode.error_wrongdata.msg;
-    } else if (data.name == 'ValidationError') {
-      status = config.errorCode.error_validation.code;
-      msg = config.errorCode.error_validation.msg;
+      status = app.config.errorCode.error.code;
+      msg = app.config.errorCode.error.msg;
     } else {
-      status = !data.code ? config.errorCode.success.code : data.code;
-      msg = !data.msg ? config.errorCode.success.msg : data.msg;
+      status = !data.code ? app.config.errorCode.success.code : data.code;
+      msg = !data.msg ? app.config.errorCode.success.msg : data.msg;
     }
     return {
-      // seqno: reqData.seqno,
-      cmd: reqData.cmd,
       status,
       msg,
       data: !data.code ? data : {}
@@ -38,7 +32,7 @@ module.exports = (app = {}, config = {}) => {
       }else{
         body = req.body;
       }
-      let result = respData(data.err ? error(data.err) : (data.hasOwnProperty('data') ? data.data : data), body);
+      let result = respData(data.err ? app.error(data.err) : (data.hasOwnProperty('data') ? data.data : data), body);
       let resultStr = JSON.stringify(result);
       // 压缩结果
       res.statusCode = 200;
