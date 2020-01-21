@@ -27,7 +27,7 @@ module.exports = (app = {}, config = {}) => {
   app.responseFormat = function(req, res, next) {
     res.print = function(data){
       let body = {};
-      if(req.method == 'GET'){
+      if(req.method == 'GET' && req.headers['content-type' !== 'application/json']){
         body = req.query;
       }else{
         body = req.body;
